@@ -1,6 +1,7 @@
 import { Button } from "@nextui-org/react";
 import * as actions from "@/actions";
 import { auth } from "@/auth";
+import Profile from "@/components/profile";
 
 const { signInGit, signInGoog, signOut } = actions;
 
@@ -25,6 +26,8 @@ export default async function Home() {
       ) : (
         <div>Signed out!</div>
       )}
+
+      <Profile />
     </div>
   );
 }
