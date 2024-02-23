@@ -36,15 +36,27 @@ export default function HeaderAuth() {
     authContent = (
       <>
         <NavbarItem>
-          <form action={actions.signInGit}>
-            <Button type="submit" color="secondary" variant="bordered">
+          <form action={actions.signIn}>
+            <Button
+              name="provider"
+              value="github" // This must be one of your configure authjs providers
+              type="submit"
+              color="secondary"
+              variant="bordered"
+            >
               Sign In
             </Button>
           </form>
         </NavbarItem>
         <NavbarItem>
-          <form action={actions.signInGoog}>
-            <Button type="submit" color="primary" variant="flat">
+          <form action={actions.signIn}>
+            <Button
+              name="provider"
+              value="google"
+              type="submit"
+              color="primary"
+              variant="flat"
+            >
               Sign Up
             </Button>
           </form>

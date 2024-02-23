@@ -3,6 +3,8 @@ import NextAuth from "next-auth";
 import { db } from "@/db";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import credentials from "next-auth/providers/credentials";
+import { compare } from "bcryptjs";
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -18,15 +20,53 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !AUTH_SECRET) {
   throw new Error("Missing Google oauth credenntials!");
 }
 
+interface AuthData {
+  email: string;
+  password: string;
+}
+
+const authUser = async (data: AuthData) => {
+  const { email, password } = data;
+  const user = await db.user.findUnique({ where: { email } });
+  if (!user) return null;
+  const isvalidPassword = compare(password, user.password || "");
+  if (!isvalidPassword) return null;
+  return user;
+};
+
 export const {
   handlers: { GET, POST },
   auth,
   signIn,
   signOut,
 } = NextAuth({
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 2,
+  },
   adapter: PrismaAdapter(db),
   secret: AUTH_SECRET,
   providers: [
+    credentials({
+      // name: "",
+      authorize(credentials) {
+        if (!credentials.email || !credentials.password) return null;
+        return authUser(credentials as AuthData);
+      },
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "janedoe@email.com",
+          autoFocus: true,
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "*********",
+        },
+      },
+    }),
     Github({
       clientId: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
@@ -43,6 +83,12 @@ export const {
         session.user.id = user.id;
       }
       return session;
+    },
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
     },
   },
 });
