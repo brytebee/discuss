@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import * as actions from "@/actions";
+import Link from "next/link";
 
 export default function HeaderAuth() {
   const session = useSession();
@@ -36,30 +37,18 @@ export default function HeaderAuth() {
     authContent = (
       <>
         <NavbarItem>
-          <form action={actions.signIn}>
-            <Button
-              name="provider"
-              value="github" // This must be one of your configure authjs providers
-              type="submit"
-              color="secondary"
-              variant="bordered"
-            >
+          <Link href="/api/auth/signin">
+            <Button type="submit" color="secondary" variant="bordered">
               Sign In
             </Button>
-          </form>
+          </Link>
         </NavbarItem>
         <NavbarItem>
-          <form action={actions.signIn}>
-            <Button
-              name="provider"
-              value="google"
-              type="submit"
-              color="primary"
-              variant="flat"
-            >
+          <Link href="/api/auth/register">
+            <Button type="submit" color="primary" variant="flat">
               Sign Up
             </Button>
-          </form>
+          </Link>
         </NavbarItem>
       </>
     );

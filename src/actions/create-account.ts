@@ -57,6 +57,7 @@ export async function createAccount(
         password: encryptPassword,
       },
     });
+    // Generate random 6 digit code
     // Send email verification code
   } catch (err: unknown) {
     if (err instanceof Error) {
