@@ -25,7 +25,7 @@ export default function HeaderAuth() {
         </PopoverTrigger>
         <PopoverContent>
           <form action={actions.signOut}>
-            <Button type="submit" color="danger">
+            <Button type="submit" color="danger" className=" shadow-sm">
               Sign Out
             </Button>
           </form>
