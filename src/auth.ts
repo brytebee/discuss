@@ -5,7 +5,6 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import { redirect } from "next/navigation";
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -49,7 +48,6 @@ export const {
   secret: AUTH_SECRET,
   providers: [
     credentials({
-      // name: "",
       authorize(credentials) {
         if (!credentials.email || !credentials.password) return null;
         return authUser(credentials as AuthData);
