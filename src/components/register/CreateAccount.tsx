@@ -1,8 +1,9 @@
 "use client";
 
 import * as actions from "@/actions";
-import { Button, Input } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import { useFormState } from "react-dom";
+import FormButton from "../common/form-button";
 
 export default function CreateAccountPage() {
   const [formState, action] = useFormState(actions.createAccount, {
@@ -35,9 +36,7 @@ export default function CreateAccountPage() {
             {formState.errors._form?.join(", ")}
           </div>
         ) : null}
-        <Button type="submit" color="primary">
-          Register
-        </Button>
+        <FormButton>Register</FormButton>
       </div>
     </form>
   );

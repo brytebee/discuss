@@ -42,7 +42,7 @@ export const {
 } = NextAuth({
   session: {
     strategy: "jwt",
-    maxAge: 30,
+    maxAge: 60 * 60 * 24,
   },
   adapter: PrismaAdapter(db),
   secret: AUTH_SECRET,
