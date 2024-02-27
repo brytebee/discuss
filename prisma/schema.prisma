@@ -41,6 +41,7 @@ model User {
   password      String?
   emailVerified DateTime?
   image         String?
+  active        Boolean @default(false)
   accounts      Account[]
   sessions      Session[]
   Post          Post[]

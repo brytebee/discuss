@@ -5,16 +5,17 @@ import { z } from "zod";
 import { hash } from "bcryptjs";
 import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
+import { decryptCode } from "./playplay";
 
-const CreateAccountSchema = z.object({
+const VerifyCodeSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  code: z.string().min(6),
 });
 
 interface RegData {
   errors: {
     email?: string[];
-    password?: string[];
+    code?: string[];
     _form?: string[];
   };
   data?: {
@@ -22,16 +23,16 @@ interface RegData {
   };
 }
 
-export async function createAccount(
+export async function verifyCode(
   formState: RegData,
   formData: FormData
 ): Promise<RegData> {
   const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const code = formData.get("code") as string;
 
-  const validate = CreateAccountSchema.safeParse({
+  const validate = VerifyCodeSchema.safeParse({
     email,
-    password,
+    code,
   });
 
   if (!validate.success) {
@@ -41,19 +42,40 @@ export async function createAccount(
   }
 
   const existing = await db.user.findUnique({ where: { email } });
-  if (existing)
+  if (!existing)
     return {
-      errors: { _form: ["User already exists!"] },
+      errors: { _form: ["User doesn't exist!"] },
     };
 
-  const encryptPassword = await hash(validate.data.password, 10);
+  // get the user code from DB
+  const dbCode = await db.verificationToken.findFirst({
+    where: { identifier: email },
+  });
+  if (!dbCode) {
+    return {
+      errors: {
+        _form: ["Code not found!"],
+      },
+    };
+  }
+  // pass the code to decrypt function
+  const dcryptedCode = await decryptCode(dbCode);
+
+  if (code !== dbCode.token) {
+    return {
+      errors: {
+        _form: ["Incorrect code!"],
+      },
+    };
+  }
 
   let user: User;
   try {
-    user = await db.user.create({
+    user = await db.user.update({
+      where: { email },
       data: {
-        email: validate.data.email,
-        password: encryptPassword,
+        emailVerified: Date.now().toString(),
+        active: true,
       },
     });
 
