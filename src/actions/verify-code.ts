@@ -5,7 +5,7 @@ import { z } from "zod";
 import { hash } from "bcryptjs";
 import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { decryptCode } from "./playplay";
+import { decryptCode } from "@/utils";
 
 const VerifyCodeSchema = z.object({
   email: z.string().email(),
