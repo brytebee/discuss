@@ -5,7 +5,8 @@ import { z } from "zod";
 import { hash } from "bcryptjs";
 import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { generateCode, sendCodeToEmail } from "@/utils";
+import { encryptCode, generateCode, sendCodeToEmail } from "@/utils";
+import { generateTime } from "@/utils";
 
 const CreateAccountSchema = z.object({
   name: z
@@ -106,16 +107,15 @@ export async function createAccount(
     //   };
     // }
 
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + 30 * 60000); // 30 minutes from now
-    const _in30minsTime = expiresAt.toISOString();
+    const _in30minsTime = generateTime(30);
+    const encryptedToken = encryptCode(email, code);
 
     // Encode and save the code into your DB
     await db.verificationToken.create({
       data: {
         identifier: email,
         expires: _in30minsTime,
-        token: code,
+        token: encryptedToken,
       },
     });
   } catch (err: unknown) {

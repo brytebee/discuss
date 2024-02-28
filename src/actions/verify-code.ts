@@ -2,10 +2,9 @@
 
 import { db } from "@/db";
 import { z } from "zod";
-import { hash } from "bcryptjs";
 import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { decryptCode } from "@/utils";
+import { decryptCode, generateTime } from "@/utils";
 
 const VerifyCodeSchema = z.object({
   email: z.string().email(),
@@ -13,7 +12,7 @@ const VerifyCodeSchema = z.object({
 });
 
 interface RegData {
-  errors: {
+  errors?: {
     email?: string[];
     code?: string[];
     _form?: string[];
@@ -48,7 +47,7 @@ export async function verifyCode(
     };
 
   // get the user code from DB
-  const dbCode = await db.verificationToken.findFirst({
+  const dbCode = await db.verificationToken.findUnique({
     where: { identifier: email },
   });
   if (!dbCode) {
@@ -59,9 +58,10 @@ export async function verifyCode(
     };
   }
   // pass the code to decrypt function
-  const dcryptedCode = await decryptCode(dbCode);
+  const dcryptedCode = await decryptCode(dbCode.token);
 
-  if (code !== dbCode.token) {
+  // @ts-ignore
+  if (code !== dcryptedCode?.code) {
     return {
       errors: {
         _form: ["Incorrect code!"],
@@ -69,12 +69,14 @@ export async function verifyCode(
     };
   }
 
+  const rightNow = generateTime(0);
+
   let user: User;
   try {
     user = await db.user.update({
       where: { email },
       data: {
-        emailVerified: Date.now().toString(),
+        emailVerified: rightNow,
         active: true,
       },
     });

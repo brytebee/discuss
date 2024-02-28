@@ -1,10 +1,11 @@
 import cryptoRandomString from "crypto-random-string";
 
+const EMAIL_LINK = process.env.EMAIL_ENDPOINT?.toString();
+
+// Generate code
 export function generateCode(length: number): string {
   return cryptoRandomString({ length, type: "numeric" });
 }
-
-const EMAIL_LINK = process.env.EMAIL_ENDPOINT?.toString();
 
 interface EmailData {
   from: string;
@@ -14,6 +15,7 @@ interface EmailData {
   product: string;
 }
 
+// Send emails for confirmations
 export async function sendCodeToEmail(arg: EmailData) {
   if (!EMAIL_LINK) {
     throw new Error("Email sending link unavailable!");
@@ -25,4 +27,11 @@ export async function sendCodeToEmail(arg: EmailData) {
     },
     body: JSON.stringify(arg),
   });
+}
+
+// Generate ISO standard time
+export function generateTime(mins: number) {
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + mins * 60000);
+  return expiresAt.toISOString();
 }

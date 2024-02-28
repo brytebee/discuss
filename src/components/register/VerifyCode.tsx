@@ -6,9 +6,7 @@ import { useFormState } from "react-dom";
 import FormButton from "../common/form-button";
 
 export default function VerifyCode() {
-  const [formState, action] = useFormState(actions.verifyCode, {
-    errors: {},
-  });
+  const [formState, action] = useFormState(actions.verifyCode, {});
   return (
     <form action={action}>
       <div className="flex flex-col gap-4 p-4 w-80">
@@ -19,8 +17,8 @@ export default function VerifyCode() {
           type="email"
           labelPlacement="outside"
           placeholder="janedoe@email.com"
-          isInvalid={!!formState.errors.email}
-          errorMessage={formState.errors.email?.join(", ")}
+          isInvalid={!!formState.errors?.email}
+          errorMessage={formState.errors?.email?.join(", ")}
         />
         <Input
           name="code"
@@ -29,10 +27,10 @@ export default function VerifyCode() {
           maxLength={6}
           labelPlacement="outside"
           placeholder="6 digit code"
-          isInvalid={!!formState.errors.code}
-          errorMessage={formState.errors.code?.join(", ")}
+          isInvalid={!!formState.errors?.code}
+          errorMessage={formState.errors?.code?.join(", ")}
         />
-        {formState.errors._form ? (
+        {formState.errors?._form ? (
           <div className="rounded border-[1px] bg-red-200">
             {formState.errors._form?.join(", ")}
           </div>
