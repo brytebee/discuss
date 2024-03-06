@@ -12,8 +12,15 @@ import FormButton from "@/components/common/form-button";
 import { useFormState } from "react-dom";
 import * as actions from "@/actions";
 
-export default function CreatePostForm() {
-  const [formState, action] = useFormState(actions.createPost, {});
+interface CreatePostFormProps {
+  slug: string;
+}
+
+export default function CreatePostForm({ slug }: CreatePostFormProps) {
+  const [formState, action] = useFormState(
+    actions.createPost.bind(null, slug),
+    {}
+  );
   return (
     <div>
       <Popover>

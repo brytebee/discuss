@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 import { db } from "@/db";
@@ -77,17 +78,19 @@ export const {
   ],
   callbacks: {
     // This is usually not needed, here we're fixing a bug in next-auth
-    async session({ session, user }: any) {
-      if (session && user) {
-        session.user.id = user.id;
-      }
-      return session;
-    },
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        // @ts-ignore
+        const { password, ...data } = user;
+        token.user = data;
       }
       return token;
+    },
+    async session({ token, session }: any) {
+      if (session && token) {
+        session.user = token.user;
+      }
+      return session;
     },
     async redirect({ url, baseUrl }) {
       // Repurpose redirection to fit your needs, remember you have

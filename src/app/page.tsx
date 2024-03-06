@@ -1,7 +1,6 @@
 import TopicCreateForm from "@/components/topic/topic-create-form";
 import TopicList from "@/components/topic/topic-list";
 import { Button, Divider } from "@nextui-org/react";
-import * as act from "@/actions";
 
 export default async function Home() {
   return (
@@ -9,7 +8,7 @@ export default async function Home() {
       <div className="col-span-3">
         Top posts
         <br />
-        <form action={""}>
+        <form>
           <Button type="submit" color="success">
             Play
           </Button>

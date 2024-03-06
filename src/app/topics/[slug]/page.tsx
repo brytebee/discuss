@@ -14,7 +14,7 @@ export default function TopicShow({ params: { slug } }: Props) {
         <h1 className="text-2xl font-bold mb-2">{slug}</h1>
       </div>
       <div>
-        <CreatePostForm />
+        <CreatePostForm slug={slug} />
       </div>
     </div>
   );
