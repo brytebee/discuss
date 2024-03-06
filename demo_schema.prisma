@@ -1,0 +1,134 @@
+
+enum Role {
+  SUPER_ADMIN
+  CENTRAL_ADMIN
+  STATE_ADMIN
+  SUPERVISOR
+  MARKETER
+  DEV
+}
+
+model Location {
+  id            String     @id @default(uuid())
+  name          String
+  state         String
+}
+
+model User {
+  id            String     @id @default(uuid())
+  name          String?
+  phone         String?
+  avatar        String?     
+  
+  username      String     @unique
+  password      String
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  location      Location   @relation(fields: [locationId], references: [id])
+  locationId    String
+  
+  confirmed     Boolean    @default(false)  // Is user's phone is confirmed 
+  // consider TrueCaller API
+  active        Boolean    @default(false)  // Is user active on the system
+}
+
+model Staff {
+  id            String     @id @default(uuid())
+  user          User       @relation(fields: [userId], references: [id])
+  userId        String
+  role          Role       // Enum representing staff roles
+  email         String
+}
+
+model Customer {
+  id            String     @id @default(uuid())
+  cardNo        String     // Location name first 3 char + random 7 numbers
+  dailyAmount   Float?
+  user          User       @relation(fields: [userId], references: [id])
+  userId        String
+}
+
+model Marketer {
+  id            String        @id @default(uuid())
+  staff         Staff      @relation(fields: [staffId], references: [id])
+  staffId       String
+  assignedTo    Supervisor?   // One-to-one relationship with Supervisor
+  customers      Customer[]
+}
+
+model Supervisor {
+  id            String         @id @default(uuid())
+  staff         Staff          @relation(fields: [staffId], references: [id])
+  staffId       String
+  assignedTo    StateAdmin?    // One-to-one relationship with StateAdmin
+  marketers     Marketer[]
+}
+
+model StateAdmin {
+  id            String           @id @default(uuid())
+  staff         Staff            @relation(fields: [staffId], references: [id])
+  staffId       String
+  assignedTo    CentralAdmin?    // One-to-one relationship with CentralAdmin
+  supervisors   Supervisor[]
+}
+
+model CentralAdmin {
+  id            String         @id @default(uuid())
+  staff         Staff          @relation(fields: [staffId], references: [id])
+  staffId       String
+  stateAdmin    StateAdmin[]
+}
+
+type Mutation {
+  promoteStaff(staffId: String!): Staff
+  demoteStaff(staffId: String!): Staff
+  transferStaff(staffId: String!, newLocationId: String!): Staff
+}
+
+model Season {
+  id              String       @id @default(uuid())
+  name            String
+  startDate       DateTime
+  numberOfDays    Int
+  endDate         DateTime
+}
+
+model Product {
+  id           String     @id @default(uuid())
+  name         String
+  prices       ProductPrice[]
+}
+
+model ProductPrice {
+  id           String     @id @default(uuid())
+  product      Product     @relation(fields: [productId], references: [id])
+  season       Season      @relation(fields: [seasonId], references: [id])
+  price        Float
+  productId    String
+  seasonId     String
+}
+
+model Membership {
+  id           String     @id @default(uuid())
+  user         User       @relation(fields: [userId], references: [id])
+  season       Season     @relation(fields: [seasonId], references: [id])
+  userId       String
+  seasonId     String
+  selections   Selection[]
+}
+
+model Selection {
+  id           String     @id @default(uuid())
+  user         User       @relation(fields: [userId], references: [id])
+  product      Product    @relation(fields: [productId], references: [id])
+  season       Season     @relation(fields: [seasonId], references: [id])
+  quantity     Int
+  userId       String
+  productId    String
+  seasonId     String
+  memberships  Membership[]
+}
+
+

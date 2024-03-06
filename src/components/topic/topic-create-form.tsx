@@ -22,7 +22,7 @@ export default function TopicCreateForm() {
       <PopoverContent>
         <form action={action}>
           <div className="flex flex-col gap-4 p-4 w-80">
-            <h1>Create a topic</h1>
+            <h1 className="text-lg text-center">Create a topic</h1>
             <Input
               name="name"
               label="Name"
@@ -44,9 +44,7 @@ export default function TopicCreateForm() {
                 {formState.errors._form?.join(", ")}
               </div>
             ) : null}
-            <FormButton>
-              Submit
-            </FormButton>
+            <FormButton>Submit</FormButton>
           </div>
         </form>
       </PopoverContent>
