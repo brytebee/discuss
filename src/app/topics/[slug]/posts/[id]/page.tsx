@@ -7,20 +7,20 @@ import { path } from "@/path";
 interface PostShowPageProps {
   params: {
     slug: string;
-    postId: string;
+    id: string;
   };
 }
 
 export default async function PostShowPage({ params }: PostShowPageProps) {
-  const { slug, postId } = params;
+  const { slug, id } = params;
 
   return (
     <div className="space-y-3">
       <Link className="underline decoration-solid" href={path.topicShow(slug)}>
         {"< "}Back to {slug}
       </Link>
-      {/* <PostShow /> */}
-      {/* <CommentCreateForm postId={postId} startOpen /> */}
+      <PostShow postId={id} />
+      <CommentCreateForm postId={id} startOpen />
       {/* <CommentList comments={comments} /> */}
     </div>
   );
