@@ -3,6 +3,7 @@ import PostShow from "@/components/post/post-show";
 import CommentList from "@/components/comment/comment-list";
 import CommentCreateForm from "@/components/comment/comment-create-form";
 import { path } from "@/path";
+import { fetchCommentsByPostId } from "@/db/queries/comment";
 
 interface PostShowPageProps {
   params: {
@@ -21,7 +22,7 @@ export default async function PostShowPage({ params }: PostShowPageProps) {
       </Link>
       <PostShow postId={id} />
       <CommentCreateForm postId={id} startOpen />
-      {/* <CommentList comments={comments} /> */}
+      <CommentList fetchData={() => fetchCommentsByPostId(id)} />
     </div>
   );
 }
