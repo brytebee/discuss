@@ -1,5 +1,7 @@
+import PostList from "@/components/post/post-list";
 import TopicCreateForm from "@/components/topic/topic-create-form";
 import TopicList from "@/components/topic/topic-list";
+import { fetchTopPosts } from "@/db/queries/post";
 import { Button, Divider } from "@nextui-org/react";
 
 export default async function Home() {
@@ -8,11 +10,7 @@ export default async function Home() {
       <div className="col-span-3">
         Top posts
         <br />
-        <form>
-          <Button type="submit" color="success">
-            Play
-          </Button>
-        </form>
+        <PostList fetchData={fetchTopPosts} />
       </div>
       <div className="border shadow py-3 px-2">
         <TopicCreateForm />
